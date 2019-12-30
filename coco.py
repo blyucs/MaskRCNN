@@ -198,6 +198,7 @@ if __name__ == '__main__':
     else:
         model = modellib.MaskRCNN(config=config, model_dir=args.logs)
     if config.GPU_COUNT:
+        print("gpu count: {}".format(config.GPU_COUNT))
         model = model.cuda()
 
     # Load weights

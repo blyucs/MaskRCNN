@@ -147,10 +147,18 @@ class FPN(nn.Module):
         # p3_out = self.P3_conv1(c3_out) + F.upsample(p4_out, scale_factor=2)
         # p2_out = self.P2_conv1(c2_out) + F.upsample(p3_out, scale_factor=2)
 
+        print(c4_out.shape)
+        print(self.P4_conv1(c4_out).shape)
+        print(F.interpolate(p5_out,scale_factor=2).shape)
+        if(c4_out.shape[2] != 64):
+            pdb.set_trace()
         p4_out = self.P4_conv1(c4_out) + F.interpolate(p5_out, scale_factor=2)
         p3_out = self.P3_conv1(c3_out) + F.interpolate(p4_out, scale_factor=2)
+        print(c2_out.shape)
+        print(self.P2_conv1(c2_out).shape)
+        print(F.interpolate(p3_out,scale_factor=2).shape)
         p2_out = self.P2_conv1(c2_out) + F.interpolate(p3_out, scale_factor=2)
-
+        print(p2_out.shape)
         p5_out = self.P5_conv2(p5_out)
         p4_out = self.P4_conv2(p4_out)
         p3_out = self.P3_conv2(p3_out)

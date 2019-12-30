@@ -20,6 +20,7 @@ import utils
 
 import torch
 
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 # Root directory of the project
 ROOT_DIR = os.getcwd()
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     print(model)
 
     img = skimage.io.imread(args.image)
-    if img .ndim != 3:
+    if img.ndim != 3:
         img = skimage.color.grey2rgb(img)
 
     # Run detection

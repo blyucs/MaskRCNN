@@ -210,14 +210,16 @@ def encode_image(image, min_dim, max_dim):
         nw = round(w * scale)
         image = transform.Resize((nh, nw))(image)
 
-        # Padding ...
-        top_pad = (max_dim - nh) // 2
-        bottom_pad = max_dim - nh - top_pad
-        left_pad = (max_dim - nw) // 2
-        right_pad = max_dim - nw - left_pad
-        padding = (left_pad, top_pad, right_pad, bottom_pad)
-        image = transform.Pad(padding)(image)
-        window = [top_pad, left_pad, nh + top_pad, nw + left_pad]
+    # Padding ...
+    nh = image.height
+    nw = image.width
+    top_pad = (max_dim - nh) // 2
+    bottom_pad = max_dim - nh - top_pad
+    left_pad = (max_dim - nw) // 2
+    right_pad = max_dim - nw - left_pad
+    padding = (left_pad, top_pad, right_pad, bottom_pad)
+    image = transform.Pad(padding)(image)
+    window = [top_pad, left_pad, nh + top_pad, nw + left_pad]
 
     cropbox = Box.fromlist(window)
     return image, scale, cropbox
@@ -598,40 +600,16 @@ class CocoLabel(object):
     def name(cls, label_id):
         """Label no range is [0, 80]."""
         label_names = [
-            'BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
-            'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
-            'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-            'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-            'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-            'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-            'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
-            'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-            'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-            'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-            'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-            'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-            'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+            'BG','facebase', 'leftbrow', 'rightbrow', 'lefteye', 'righteye', 'nose', 'uplip', 'mouth', 'downlip', 'hair',
         ]
-
         return label_names[label_id] if label_id < len(label_names) else "BG"
 
     @classmethod
     def zh_name(cls, label_id):
         """Label range is [0, 80]."""
         zh_names = [
-            '背景', '人', '自行车', '汽车', '摩托车', '飞机', '公共汽车', '火车',
-            '卡车', '船', '红绿灯', '消防栓', '停车标志',
-            '停车计时器', '长凳', '鸟', '猫', '狗', '马', '羊', '牛',
-            '大象', '熊', '斑马', '长颈鹿', '背包', '伞', '手提包',
-            '领带', '手提箱', '飞盘', '滑雪', '滑雪板', '运动球', '风筝',
-            '棒球棒', '棒球手套', '滑板', '冲浪板',
-            '网球拍', '瓶子', '酒杯', '杯子', '叉子', '刀', '勺子',
-            '碗', '香蕉', '苹果', '三明治', '橙子', '花椰菜', '胡萝卜',
-            '热狗', '比萨饼', '甜甜圈', '蛋糕', '椅子', '沙发', '盆栽植物',
-            '床', '餐桌', '厕所', '电视', '笔记本电脑', '鼠标', '遥控器',
-            '键盘', '手机', '微波炉', '烤箱', '烤面包机', '水槽',
-            '冰箱', '书', '钟', '花瓶', '剪刀', '泰迪熊',
-            '吹风机', '牙刷'
+            'beijin', 'lian', 'zuomeimao', 'youmeimao', 'zuoyan', 'youyan', 'bizi', 'shangzuichun',
+            'zui', 'xiazuichun', 'toufa',
         ]
 
         return zh_names[label_id] if label_id < len(zh_names) else '背景'
@@ -642,21 +620,7 @@ class CocoLabel(object):
         class_label_map = {
             0: 0, 1: 1, 2: 2, 3: 3, 4: 4,
             5: 5, 6: 6, 7: 7, 8: 8, 9: 9,
-            10: 10, 11: 11, 13: 12, 14: 13, 15: 14,
-            16: 15, 17: 16, 18: 17, 19: 18, 20: 19,
-            21: 20, 22: 21, 23: 22, 24: 23, 25: 24,
-            27: 25, 28: 26, 31: 27, 32: 28, 33: 29,
-            34: 30, 35: 31, 36: 32, 37: 33, 38: 34,
-            39: 35, 40: 36, 41: 37, 42: 38, 43: 39,
-            44: 40, 46: 41, 47: 42, 48: 43, 49: 44,
-            50: 45, 51: 46, 52: 47, 53: 48, 54: 49,
-            55: 50, 56: 51, 57: 52, 58: 53, 59: 54,
-            60: 55, 61: 56, 62: 57, 63: 58, 64: 59,
-            65: 60, 67: 61, 70: 62, 72: 63, 73: 64,
-            74: 65, 75: 66, 76: 67, 77: 68, 78: 69,
-            79: 70, 80: 71, 81: 72, 82: 73, 84: 74,
-            85: 75, 86: 76, 87: 77, 88: 78, 89: 79,
-            90: 80
+            10: 10,
         }
 
         return class_label_map[class_id]
@@ -665,15 +629,7 @@ class CocoLabel(object):
     def to_class(cls, label_id):
         """Transform label id to class id."""
         class_list = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-            22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
-            44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-            64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 84, 85, 86, 87,
-            88, 89, 90, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18,
-            19, 20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-            41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-            61, 62, 63, 64, 65, 67, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 84,
-            85, 86, 87, 88, 89, 90
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
         ]
         return class_list[label_id] if label_id < len(class_list) else 0
 
@@ -681,6 +637,7 @@ class CocoLabel(object):
 def coco_annfile(dir, subset, year=2014):
     """Construct coco annotation file."""
     annfile = '{}/annotations/instances_{}{}.json'.format(dir, subset, year)
+    print(annfile)
     return annfile
 
 
@@ -689,6 +646,7 @@ def coco_root(dir, subset, year=2014):
     if subset == "minival" or subset == "valminusminival":
         subset = "val"
     image_dir = "{}/{}{}".format(dir, subset, year)
+    print(image_dir)
     return image_dir
 
 
@@ -719,6 +677,10 @@ class CocoMaskRCNNDataset(dataset.CocoDetection):
 
         image, scale, cropbox = encode_image(rawimg, self.config.IMAGE_MIN_DIM,
                                              self.config.IMAGE_MAX_DIM)
+        if(image.height != 1024 | image.width != 1024):
+            print("Warning ...", index, self.image_name(index))
+            print(image.height,image.width)
+            pdb.set_trace()
         masks = encode_masks(masks, scale, cropbox)
         boxes = encode_boxes(boxes, scale, cropbox)
 
@@ -797,7 +759,7 @@ class CocoMaskRCNNDataset(dataset.CocoDetection):
     def load(self, index, hflip=False):
         """Load basic coco image data."""
         image, anns = super().__getitem__(index)
-
+        #Image._show(image)
         # For enhance data
         hflip = hflip & (random.randint(0, 1))
 
@@ -893,4 +855,4 @@ def test():
     valid_dataset.net_show(0)
     valid_dataset.summary()
 
-# test()
+#test()
